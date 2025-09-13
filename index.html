@@ -6,21 +6,25 @@
     body { text-align: center; background: #eee; margin: 0; padding: 0; }
     canvas { background: #fff; display: block; margin: auto; border: 2px solid black; }
     .controls {
-      margin-top: 10px;
-      display: grid;
-      grid-template-columns: 60px 60px 60px;
-      justify-content: center;
-      gap: 10px;
+      margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
     }
     .btn {
-      width: 60px;
-      height: 60px;
-      font-size: 20px;
-      font-weight: bold;
-      border-radius: 10px;
-      border: none;
-      background: #4CAF50;
-      color: white;
+      width: 100%;
+    height: 80px;
+    font-size: 32px;
+    font-weight: bold;
+    border-radius: 15px;
+    border: none;
+    background: #4CAF50;
+    color: white;
     }
     .btn:active { background: #388E3C; }
   </style>
@@ -31,13 +35,12 @@
 
   <!-- Tombol kontrol layar sentuh -->
   <div class="controls">
-    <div></div>
-    <button class="btn" onclick="setDirection('up')">▲</button>
-    <div></div>
-    <button class="btn" onclick="setDirection('left')">◀</button>
-    <button class="btn" onclick="setDirection('down')">▼</button>
-    <button class="btn" onclick="setDirection('right')">▶</button>
-  </div>
+  <button class="btn up" onclick="setDirection('up')">▲</button>
+  <button class="btn left" onclick="setDirection('left')">◀</button>
+  <button class="btn down" onclick="setDirection('down')">▼</button>
+  <button class="btn right" onclick="setDirection('right')">▶</button>
+</div>
+
 
   <script>
     const canvas = document.getElementById("gameCanvas");
@@ -148,4 +151,5 @@
   </script>
 </body>
 </html>
+
 
