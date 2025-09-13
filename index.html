@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Snake Pending Direction</title>
+  <style>
+    body { text-align: center; background: #eee; margin: 0; padding: 0; }
+    canvas { background: #fff; display: block; margin: auto; border: 2px solid black; }
+    .controls {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 60px 60px 60px;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn {
+      width: 60px;
+      height: 60px;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 10px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+    }
+    .btn:active { background: #388E3C; }
+  </style>
+</head>
+<body>
+  <h2>🐍 Snake – Pending Direction</h2>
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Tombol kontrol layar sentuh -->
+  <div class="controls">
+    <div></div>
+    <button class="btn" onclick="setDirection('up')">▲</button>
+    <div></div>
+    <button class="btn" onclick="setDirection('left')">◀</button>
+    <button class="btn" onclick="setDirection('down')">▼</button>
+    <button class="btn" onclick="setDirection('right')">▶</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const box = 20;
+    const cols = Math.floor(window.innerWidth / box);
+    const rows = Math.floor((window.innerHeight * 0.6) / box);
+
+    canvas.width = cols * box;
+    canvas.height = rows * box;
+
+    let snake = [{x: Math.floor(cols/2) * box, y: Math.floor(rows/2) * box}];
+    let food = {
+      x: Math.floor(Math.random() * cols) * box,
+      y: Math.floor(Math.random() * rows) * box
+    };
+
+    // arah aktif & arah pending
+    let dx = box, dy = 0;
+    let nextDx = dx, nextDy = dy;
+
+    let score = 0;
+    let speed = 400;
+    let gameLoop = setInterval(draw, speed);
+
+    // Keyboard
+    document.addEventListener("keydown", direction);
+    function direction(event) {
+      if (event.key === "ArrowLeft" && dx !== box) { nextDx = -box; nextDy = 0; }
+      else if (event.key === "ArrowUp" && dy !== box) { nextDx = 0; nextDy = -box; }
+      else if (event.key === "ArrowRight" && dx !== -box) { nextDx = box; nextDy = 0; }
+      else if (event.key === "ArrowDown" && dy !== -box) { nextDx = 0; nextDy = box; }
+    }
+
+    // Tombol layar sentuh
+    function setDirection(dir) {
+      if (dir === "left" && dx !== box) { nextDx = -box; nextDy = 0; }
+      else if (dir === "up" && dy !== box) { nextDx = 0; nextDy = -box; }
+      else if (dir === "right" && dx !== -box) { nextDx = box; nextDy = 0; }
+      else if (dir === "down" && dy !== -box) { nextDx = 0; nextDy = box; }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // pakai arah pending tepat saat pindah blok
+      dx = nextDx;
+      dy = nextDy;
+
+      // posisi kepala baru
+      let headX = snake[0].x + dx;
+      let headY = snake[0].y + dy;
+
+      // tembus tembok
+      if (headX < 0) headX = canvas.width - box;
+      if (headX >= canvas.width) headX = 0;
+      if (headY < 0) headY = canvas.height - box;
+      if (headY >= canvas.height) headY = 0;
+
+      // cek makan
+      if (headX === food.x && headY === food.y) {
+        score++;
+        food = {
+          x: Math.floor(Math.random() * cols) * box,
+          y: Math.floor(Math.random() * rows) * box
+        };
+
+        // percepat game
+        if (speed > 80) {
+          speed -= 10;
+          clearInterval(gameLoop);
+          gameLoop = setInterval(draw, speed);
+        }
+      } else {
+        snake.pop();
+      }
+
+      let newHead = {x: headX, y: headY};
+
+      // cek tabrak badan
+      for (let i = 0; i < snake.length; i++) {
+        if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
+          alert("Game Over! Skor: " + score);
+          document.location.reload();
+        }
+      }
+
+      snake.unshift(newHead);
+
+      // gambar ular
+      for (let i = 0; i < snake.length; i++) {
+        ctx.fillStyle = i === 0 ? "green" : "lime";
+        ctx.fillRect(snake[i].x, snake[i].y, box, box);
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+      }
+
+      // gambar makanan
+      ctx.fillStyle = "red";
+      ctx.fillRect(food.x, food.y, box, box);
+
+      // tampilkan skor
+      ctx.fillStyle = "black";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, 10, 20);
+    }
+  </script>
+</body>
+</html>
